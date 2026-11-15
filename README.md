@@ -20,34 +20,33 @@ Longer-term goals include:
 
 ## Current Status
 
-Development milestone: 0.23.0
+Development milestone: 0.24.0
 
-Lifecycle: Day 23 / 50
+Lifecycle: Day 24 / 50
 
-Day 22 answers:
-Is this TCP port accepting connections?
+Day 24 strengthens the TCP reconnaissance implementation developed during Days 22 and 23.
 
-Day 23 aims to answer:
-What service appears to be responding on this port?
+Day 22 established asynchronous TCP connection probing. Day 23 extended successful open-port observations with initial banner collection and confidence-qualified service identification.
 
-For example:
-Port	TCP status	Possible service
-22	Open	SSH
-80	Open	HTTP
-443	Open	HTTPS
-3306	Open	MySQL
-5432	Open	PostgreSQL
+The supplied implementation already contains these capabilities. Day 24 should improve their reliability rather than introduce another independent scanner.
 
-Port numbers are only hints. A service running on port 8080 might not be HTTP, and a service running on port 443 might not be HTTPS.
-Today's objectives
-- Extend the existing TCP observation model.
-- Capture initial service banners where available.
-- Identify common services using conservative heuristics.
-- Preserve connection timeout and concurrency controls.
-- Handle services that do not send an initial banner.
-- Add automated tests using mocked asynchronous streams.
-Scope: Basic banner collection and service identification only. No vulnerability exploitation, authentication attempts, brute forcing, or intrusive protocol testing..
+Objectives
 
+Correct service-classification ordering for ambiguous and recognizable banners.
+
+Preserve the distinction between observed evidence and conventional port hints.
+
+Verify that banner collection respects its byte and timeout limits.
+
+Verify reliable connection cleanup after successful and unsuccessful reads.
+
+Test enrichment of open-port observations.
+
+Ensure closed, filtered, and error observations remain unchanged.
+
+Expand regression coverage without breaking Day 22 behavior.
+
+Scope boundary: No vulnerability detection, exploitation, authentication attempts, or intrusive protocol negotiation.
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
