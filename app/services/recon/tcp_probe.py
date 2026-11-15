@@ -1,4 +1,3 @@
-
 """Asynchronous TCP connect probing service."""
 
 from __future__ import annotations
@@ -37,6 +36,7 @@ class TCPPortObservation:
     banner: str | None = None
     service_name: str | None = None
     service_confidence: str = "unknown"
+
 
 @dataclass(frozen=True, slots=True)
 class TCPServiceIdentification:
@@ -102,9 +102,7 @@ async def grab_tcp_banner(
         or not isinstance(max_banner_bytes, int)
         or not 1 <= max_banner_bytes <= 8192
     ):
-        raise TCPProbeError(
-            "max_banner_bytes must be between 1 and 8192."
-        )
+        raise TCPProbeError("max_banner_bytes must be between 1 and 8192.")
 
     writer = None
 
@@ -150,6 +148,30 @@ def identify_tcp_service(
     if normalized_banner:
         lowered = normalized_banner.lower()
 
+        # ESMTP/SMTP evidence must be checked before generic 220.
+        if "esmtp" in lowered or "smtp" in lowered:
+            return TCPServiceIdentification(
+                service_name="smtp",
+                banner=normalized_banner,
+                confidence="medium",
+            )
+
+        # Explicit FTP evidence is more useful than a generic greeting.
+        if "ftp" in lowered:
+            return TCPServiceIdentification(
+                service_name="ftp",
+                banner=normalized_banner,
+                confidence="medium",
+            )
+
+        # HTTP response evidence.
+        if lowered.startswith(("http/1.", "http/2")):
+            return TCPServiceIdentification(
+                service_name="http",
+                banner=normalized_banner,
+                confidence="high",
+            )
+
         if lowered.startswith("ssh-"):
             return TCPServiceIdentification(
                 service_name="ssh",
@@ -162,13 +184,6 @@ def identify_tcp_service(
                 service_name="ftp-or-mail",
                 banner=normalized_banner,
                 confidence="low",
-            )
-
-        if "smtp" in lowered:
-            return TCPServiceIdentification(
-                service_name="smtp",
-                banner=normalized_banner,
-                confidence="medium",
             )
 
     service_hint = TCPServiceIdentification.SERVICE_PORT_HINTS.get(port)
@@ -289,11 +304,10 @@ async def scan_tcp_ports(
                 timeout_seconds=float(timeout_seconds),
             )
 
-    results = await asyncio.gather(
-        *(bounded_probe(port) for port in normalized_ports)
-    )
+    results = await asyncio.gather(*(bounded_probe(port) for port in normalized_ports))
 
     return tuple(results)
+
 
 async def enrich_tcp_observation(
     observation: TCPPortObservation,
