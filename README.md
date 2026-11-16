@@ -20,33 +20,21 @@ Longer-term goals include:
 
 ## Current Status
 
-Development milestone: 0.24.0
+Development milestone: 0.25.0
 
-Lifecycle: Day 24 / 50
+Lifecycle: Day 25 / 50
 
-Day 24 strengthens the TCP reconnaissance implementation developed during Days 22 and 23.
+Day 25 connects the two reconnaissance sources without coupling their internal implementations.
 
-Day 22 established asynchronous TCP connection probing. Day 23 extended successful open-port observations with initial banner collection and confidence-qualified service identification.
+The integration layer will:
+1. Accept a ShodanSearchResult.
+2. Accept a collection of TCPPortObservation objects.
+3. Validate that the Shodan result belongs to the requested domain.
+4. Preserve both source result collections.
+5. Calculate useful reconnaissance metrics.
+6. Expose a consistent result object for future API and orchestration integration.
+Design decision: Shodan observations and live TCP observations will remain separately identifiable. We will not assume that a Shodan IP and a TCP hostname represent the same endpoint without verified resolution.
 
-The supplied implementation already contains these capabilities. Day 24 should improve their reliability rather than introduce another independent scanner.
-
-Objectives
-
-Correct service-classification ordering for ambiguous and recognizable banners.
-
-Preserve the distinction between observed evidence and conventional port hints.
-
-Verify that banner collection respects its byte and timeout limits.
-
-Verify reliable connection cleanup after successful and unsuccessful reads.
-
-Test enrichment of open-port observations.
-
-Ensure closed, filtered, and error observations remain unchanged.
-
-Expand regression coverage without breaking Day 22 behavior.
-
-Scope boundary: No vulnerability detection, exploitation, authentication attempts, or intrusive protocol negotiation.
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate

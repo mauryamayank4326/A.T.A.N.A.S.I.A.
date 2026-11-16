@@ -180,14 +180,13 @@ async def test_passive_recon_rejects_invalid_timeout() -> None:
                 client,
                 whois_timeout_seconds=0,
             )
-def test_sanitize_source_error():
-    assert sanitize_source_error("crt.sh") == (
-        "crt.sh collection failed."
-    )
 
-    assert sanitize_source_error("WHOIS") == (
-        "WHOIS collection failed."
-    )
+
+def test_sanitize_source_error():
+    assert sanitize_source_error("crt.sh") == ("crt.sh collection failed.")
+
+    assert sanitize_source_error("WHOIS") == ("WHOIS collection failed.")
+
 
 def test_normalize_subdomains():
     result = normalize_subdomains(
@@ -205,6 +204,7 @@ def test_normalize_subdomains():
         "api.example.com",
         "www.example.com",
     )
+
 
 def test_source_status_for_successful_result():
     result = PassiveReconResult(
