@@ -1,4 +1,3 @@
-
 import httpx
 import pytest
 
@@ -153,10 +152,7 @@ async def test_shodan_caps_observations_to_max_results(monkeypatch):
             200,
             json={
                 "total": 3,
-                "matches": [
-                    {"ip_str": f"203.0.113.{index}", "port": 443}
-                    for index in range(1, 4)
-                ],
+                "matches": [{"ip_str": f"203.0.113.{index}", "port": 443} for index in range(1, 4)],
             },
         )
 

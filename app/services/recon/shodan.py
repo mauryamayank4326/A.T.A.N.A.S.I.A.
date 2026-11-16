@@ -1,4 +1,3 @@
-
 """Asynchronous Shodan intelligence collection service."""
 
 from __future__ import annotations
@@ -83,13 +82,7 @@ def _string_tuple(value: Any) -> tuple[str, ...]:
         return ()
 
     return tuple(
-        sorted(
-            {
-                item.strip().lower()
-                for item in value
-                if isinstance(item, str) and item.strip()
-            }
-        )
+        sorted({item.strip().lower() for item in value if isinstance(item, str) and item.strip()})
     )
 
 
@@ -140,9 +133,7 @@ async def search_shodan_hosts(
         raise ValueError("max_results must be an integer.")
 
     if not 1 <= max_results <= MAX_RESULTS_LIMIT:
-        raise ValueError(
-            f"max_results must be between 1 and {MAX_RESULTS_LIMIT}."
-        )
+        raise ValueError(f"max_results must be between 1 and {MAX_RESULTS_LIMIT}.")
 
     query = f"hostname:{normalized_domain}"
 
@@ -169,30 +160,20 @@ async def search_shodan_hosts(
             ) from exc
 
         if status_code == 429:
-            raise ShodanRateLimitError(
-                "Shodan API rate limit reached."
-            ) from exc
+            raise ShodanRateLimitError("Shodan API rate limit reached.") from exc
 
-        raise ShodanRequestError(
-            f"Shodan returned HTTP status {status_code}."
-        ) from exc
+        raise ShodanRequestError(f"Shodan returned HTTP status {status_code}.") from exc
 
     except httpx.RequestError as exc:
-        raise ShodanRequestError(
-            "Unable to communicate with the Shodan API."
-        ) from exc
+        raise ShodanRequestError("Unable to communicate with the Shodan API.") from exc
 
     try:
         payload = response.json()
     except ValueError as exc:
-        raise ShodanResponseError(
-            "Shodan returned invalid JSON."
-        ) from exc
+        raise ShodanResponseError("Shodan returned invalid JSON.") from exc
 
     if not isinstance(payload, dict):
-        raise ShodanResponseError(
-            "Shodan returned an unexpected response structure."
-        )
+        raise ShodanResponseError("Shodan returned an unexpected response structure.")
 
     total = payload.get("total")
     matches = payload.get("matches")
@@ -203,10 +184,7 @@ async def search_shodan_hosts(
     if not isinstance(matches, list):
         raise ShodanResponseError("Shodan returned an invalid matches collection.")
 
-    observations = tuple(
-        _normalize_match(match)
-        for match in matches[:max_results]
-    )
+    observations = tuple(_normalize_match(match) for match in matches[:max_results])
     return ShodanSearchResult(
         domain=normalized_domain,
         query=query,

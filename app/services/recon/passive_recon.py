@@ -24,8 +24,10 @@ class SourceStatus(str, Enum):
     SUCCESS = "success"
     FAILED = "failed"
 
+
 class PassiveReconError(Exception):
     """Raised when every passive reconnaissance source fails."""
+
 
 def sanitize_source_error(source: str) -> str:
     """Return a safe, stable error message for a failed source."""
@@ -71,20 +73,13 @@ class PassiveReconResult:
     @property
     def crtsh_status(self) -> SourceStatus:
         """Return the crt.sh collection status."""
-        return (
-            SourceStatus.FAILED
-            if self.crtsh_error is not None
-            else SourceStatus.SUCCESS
-        )
+        return SourceStatus.FAILED if self.crtsh_error is not None else SourceStatus.SUCCESS
 
     @property
     def whois_status(self) -> SourceStatus:
         """Return the WHOIS collection status."""
-        return (
-            SourceStatus.FAILED
-            if self.whois_error is not None
-            else SourceStatus.SUCCESS
-        )
+        return SourceStatus.FAILED if self.whois_error is not None else SourceStatus.SUCCESS
+
     def to_summary(self) -> dict[str, object]:
         """Return a serialization-friendly reconnaissance summary."""
         return {
@@ -102,7 +97,7 @@ class PassiveReconResult:
             },
             "successful_sources": list(self.successful_sources),
             "failed_sources": list(self.failed_sources),
-    }
+        }
 
 
 async def run_passive_recon(
@@ -170,6 +165,8 @@ async def run_passive_recon(
         crtsh_error=crtsh_error,
         whois_error=whois_error,
     )
+
+
 def normalize_subdomains(
     subdomains: tuple[str, ...] | list[str],
     domain: str,
