@@ -28,9 +28,7 @@ async def create_scan(
 ) -> Scan:
     """Create a pending scan for an existing target."""
 
-    target_result = await session.execute(
-        select(Target).where(Target.id == payload.target_id)
-    )
+    target_result = await session.execute(select(Target).where(Target.id == payload.target_id))
     target = target_result.scalar_one_or_none()
 
     if target is None:

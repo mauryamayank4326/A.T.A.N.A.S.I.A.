@@ -20,20 +20,13 @@ Longer-term goals include:
 
 ## Current Status
 
-Development milestone: 0.25.0
+Development milestone: 0.26.0
 
-Lifecycle: Day 25 / 50
+Lifecycle: Day 26 / 50
 
-Day 25 connects the two reconnaissance sources without coupling their internal implementations.
+Integrate the Week 5 reconnaissance outputs with the existing SQLAlchemy async persistence layer.
 
-The integration layer will:
-1. Accept a ShodanSearchResult.
-2. Accept a collection of TCPPortObservation objects.
-3. Validate that the Shodan result belongs to the requested domain.
-4. Preserve both source result collections.
-5. Calculate useful reconnaissance metrics.
-6. Expose a consistent result object for future API and orchestration integration.
-Design decision: Shodan observations and live TCP observations will remain separately identifiable. We will not assume that a Shodan IP and a TCP hostname represent the same endpoint without verified resolution.
+The objective is to make Shodan host observations and TCP port observations persist against the correct target and scan records while preserving the existing database architecture.
 
 ```bash
 python3 -m venv .venv
