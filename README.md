@@ -20,13 +20,64 @@ Longer-term goals include:
 
 ## Current Status
 
-Development milestone: 0.26.0
+Development milestone: 0.27.0
 
-Lifecycle: Day 26 / 50
+Lifecycle: Day 27 / 50
 
-Integrate the Week 5 reconnaissance outputs with the existing SQLAlchemy async persistence layer.
+The objective of Day 27 is to introduce a centralized asynchronous orchestration engine responsible for coordinating independent reconnaissance operations.
 
-The objective is to make Shodan host observations and TCP port observations persist against the correct target and scan records while preserving the existing database architecture.
+Previously, reconnaissance services could be invoked individually:
+
+Certificate Transparency discovery.
+
+WHOIS lookups.
+
+Shodan host searches.
+
+TCP port probing.
+
+TCP service identification.
+
+Sequential execution increases total scan duration because independent operations wait for one another unnecessarily.
+
+Day 27 introduces concurrent execution.
+
+Instead of:
+
+Start Shodan
+    |
+    v
+Wait for Shodan
+    |
+    v
+Start TCP probing
+    |
+    v
+Wait for TCP probing
+    |
+    v
+Finish
+
+M.A.U.R.Y.A. will support:
+
+             Reconnaissance Orchestrator
+                       |
+          +------------+------------+
+          |            |            |
+          v            v            v
+       Shodan         TCP         WHOIS
+       Search        Probing      Lookup
+          |            |            |
+          +------------+------------+
+                       |
+                       v
+              Execution Results
+                       |
+                       v
+               Recon Summary
+                       |
+                       v
+               Persistence Layer
 
 ```bash
 python3 -m venv .venv
