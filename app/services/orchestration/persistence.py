@@ -55,9 +55,7 @@ def _validate_report(report: ReconExecutionReport) -> None:
     names = [result.name for result in report.results]
 
     if len(names) != len(set(names)):
-        raise ReconnaissanceReportError(
-            "Reconnaissance report contains duplicate task names."
-        )
+        raise ReconnaissanceReportError("Reconnaissance report contains duplicate task names.")
 
 
 async def persist_execution_report(
@@ -89,12 +87,8 @@ async def persist_execution_report(
     shodan_value = _extract_successful_result(report, "shodan")
     tcp_value = _extract_successful_result(report, "tcp_ports")
 
-    if shodan_value is not None and not isinstance(
-        shodan_value, ShodanSearchResult
-    ):
-        raise ReconnaissanceReportError(
-            "The successful shodan task returned an invalid result."
-        )
+    if shodan_value is not None and not isinstance(shodan_value, ShodanSearchResult):
+        raise ReconnaissanceReportError("The successful shodan task returned an invalid result.")
 
     if tcp_value is not None:
         if not isinstance(tcp_value, list | tuple):
@@ -102,24 +96,13 @@ async def persist_execution_report(
                 "The successful tcp_ports task must return a list or tuple."
             )
 
-        if not all(
-            isinstance(item, TCPPortObservation)
-            for item in tcp_value
-        ):
-            raise ReconnaissanceReportError(
-                "The tcp_ports task contains an invalid observation."
-            )
+        if not all(isinstance(item, TCPPortObservation) for item in tcp_value):
+            raise ReconnaissanceReportError("The tcp_ports task contains an invalid observation.")
 
     if shodan_value is None and tcp_value is None:
-        raise ReconnaissancePersistenceError(
-            "No successful reconnaissance results are available."
-        )
+        raise ReconnaissancePersistenceError("No successful reconnaissance results are available.")
 
-    tcp_observations = (
-        tuple(tcp_value)
-        if tcp_value is not None
-        else tuple()
-    )
+    tcp_observations = tuple(tcp_value) if tcp_value is not None else tuple()
 
     if shodan_value is None:
         raise ReconnaissanceReportError(
@@ -142,20 +125,11 @@ async def persist_execution_report(
             "The reconnaissance persistence transaction failed."
         ) from exc
 
-    successful_tasks = sum(
-        result.status is ReconTaskStatus.SUCCESS
-        for result in report.results
-    )
+    successful_tasks = sum(result.status is ReconTaskStatus.SUCCESS for result in report.results)
 
-    failed_tasks = sum(
-        result.status is ReconTaskStatus.FAILED
-        for result in report.results
-    )
+    failed_tasks = sum(result.status is ReconTaskStatus.FAILED for result in report.results)
 
-    timed_out_tasks = sum(
-        result.status is ReconTaskStatus.TIMED_OUT
-        for result in report.results
-    )
+    timed_out_tasks = sum(result.status is ReconTaskStatus.TIMED_OUT for result in report.results)
 
     return TransactionalPersistenceResult(
         persistence=persistence_summary,

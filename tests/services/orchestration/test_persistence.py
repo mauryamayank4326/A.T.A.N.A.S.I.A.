@@ -35,9 +35,7 @@ def make_report() -> ReconExecutionReport:
 @pytest.mark.asyncio
 async def test_rejects_existing_transaction(db_session):
     # Trigger SQLAlchemy autobegin.
-    await db_session.execute(
-        __import__("sqlalchemy").text("SELECT 1")
-    )
+    await db_session.execute(__import__("sqlalchemy").text("SELECT 1"))
 
     report = make_report()
 
