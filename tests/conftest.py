@@ -35,6 +35,11 @@ async def session(tmp_path: Path) -> AsyncGenerator[AsyncSession, None]:
 
 
 @pytest.fixture
+async def db_session(session: AsyncSession) -> AsyncGenerator[AsyncSession, None]:
+    yield session
+
+
+@pytest.fixture
 def client(tmp_path: Path) -> TestClient:
     """Create a FastAPI client backed by an isolated SQLite database."""
     settings = Settings(

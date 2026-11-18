@@ -20,64 +20,35 @@ Longer-term goals include:
 
 ## Current Status
 
-Development milestone: 0.27.0
+Development milestone: 0.28.0
 
-Lifecycle: Day 27 / 50
+Lifecycle: Day 28 / 50
 
-The objective of Day 27 is to introduce a centralized asynchronous orchestration engine responsible for coordinating independent reconnaissance operations.
+Day 28 establishes reliable transaction management for reconnaissance data.
 
-Previously, reconnaissance services could be invoked individually:
+The application now has three relevant capabilities:
 
-Certificate Transparency discovery.
+Day 26: reconnaissance observations can be persisted through SQLAlchemy.
 
-WHOIS lookups.
+Day 27: independent reconnaissance tasks can execute concurrently and produce a structured execution report.
 
-Shodan host searches.
+Day 28: successful reconnaissance results can be persisted atomically.
 
-TCP port probing.
+The persistence layer must not commit individual observations independently. If an operation fails halfway through, previously inserted observations from the same persistence operation must not remain committed.
 
-TCP service identification.
+Day 28 deliverables
 
-Sequential execution increases total scan duration because independent operations wait for one another unnecessarily.
+Add an orchestration-level persistence coordinator.
 
-Day 27 introduces concurrent execution.
+Validate the reconnaissance execution report before database writes.
 
-Instead of:
+Persist successful Shodan and TCP results within one transaction.
 
-Start Shodan
-    |
-    v
-Wait for Shodan
-    |
-    v
-Start TCP probing
-    |
-    v
-Wait for TCP probing
-    |
-    v
-Finish
+Roll back the transaction when persistence raises an exception.
 
-M.A.U.R.Y.A. will support:
+Preserve the Day 26 persistence service's flush-only behavior.
 
-             Reconnaissance Orchestrator
-                       |
-          +------------+------------+
-          |            |            |
-          v            v            v
-       Shodan         TCP         WHOIS
-       Search        Probing      Lookup
-          |            |            |
-          +------------+------------+
-                       |
-                       v
-              Execution Results
-                       |
-                       v
-               Recon Summary
-                       |
-                       v
-               Persistence Layer
+Add tests for successful commits, rollbacks, and unsuccessful reconnaissance tasks.
 
 ```bash
 python3 -m venv .venv
