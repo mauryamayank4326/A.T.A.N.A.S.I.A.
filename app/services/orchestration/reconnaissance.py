@@ -38,7 +38,7 @@ class ReconTask:
 
         if self.timeout_seconds is not None:
             if isinstance(self.timeout_seconds, bool) or not isinstance(
-                self.timeout_seconds, (int, float)
+                self.timeout_seconds, int | float
             ):
                 raise TypeError("Task timeout must be numeric.")
 
@@ -92,7 +92,7 @@ class ReconExecutionReport:
 
 def _validate_timeout(value: float) -> None:
     """Validate the default execution timeout."""
-    if isinstance(value, bool) or not isinstance(value, (int, float)):
+    if isinstance(value, bool) or not isinstance(value, int | float):
         raise TypeError("Default timeout must be numeric.")
 
     if not math.isfinite(value) or value <= 0:
@@ -171,7 +171,7 @@ async def run_concurrent_reconnaissance(
         ValueError: If configuration or task names are invalid.
         asyncio.CancelledError: If the orchestrator itself is cancelled.
     """
-    if not isinstance(tasks, (list, tuple)):
+    if not isinstance(tasks, list | tuple):
         raise TypeError("tasks must be a list or tuple.")
 
     if isinstance(max_concurrency, bool) or not isinstance(max_concurrency, int):

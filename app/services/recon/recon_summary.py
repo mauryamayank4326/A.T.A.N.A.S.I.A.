@@ -82,7 +82,7 @@ def build_recon_summary(
     if shodan_result.domain != normalized_domain:
         raise ValueError("Shodan result domain does not match the requested domain.")
 
-    if not isinstance(tcp_observations, (tuple, list)):
+    if not isinstance(tcp_observations, tuple | list):
         raise TypeError("tcp_observations must be a list or tuple.")
 
     if not all(isinstance(observation, TCPPortObservation) for observation in tcp_observations):
