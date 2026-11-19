@@ -228,7 +228,7 @@ async def run_target_reconnaissance(
             timeout_seconds=12,
         ),
         ReconTask(
-            name="tcp",
+            name="tcp_ports",
             execute=lambda: scan_tcp_ports(
                 host=host,
                 ports=ports,
