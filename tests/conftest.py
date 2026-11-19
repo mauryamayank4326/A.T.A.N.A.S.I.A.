@@ -1,6 +1,7 @@
 import asyncio
 from collections.abc import AsyncGenerator
 from pathlib import Path
+from uuid import uuid4
 
 import pytest
 from fastapi.testclient import TestClient
@@ -10,6 +11,7 @@ from app.config import Settings
 from app.core.database import create_database_engine, create_session_factory
 from app.main import create_app
 from app.models import Base, Target
+from app.models.scan import Scan, ScanStatus
 
 
 @pytest.fixture
@@ -40,6 +42,24 @@ async def db_session(session: AsyncSession) -> AsyncGenerator[AsyncSession, None
 
 
 @pytest.fixture
+async def scan_factory(db_session: AsyncSession):
+    """Create scans with a valid target for lifecycle tests."""
+
+    async def create_scan(status: ScanStatus = ScanStatus.PENDING) -> Scan:
+        target = Target(domain=f"{uuid4().hex}.example")
+        db_session.add(target)
+        await db_session.flush()
+
+        scan = Scan(target_id=target.id, status=status)
+        db_session.add(scan)
+        await db_session.commit()
+        await db_session.refresh(scan)
+        return scan
+
+    return create_scan
+
+
+@pytest.fixture
 def client(tmp_path: Path) -> TestClient:
     """Create a FastAPI client backed by an isolated SQLite database."""
     settings = Settings(
@@ -47,6 +67,7 @@ def client(tmp_path: Path) -> TestClient:
         environment="test",
         debug=False,
         database_url=f"sqlite+aiosqlite:///{tmp_path / 'api.db'}",
+        shodan_api_key=None,
     )
     application = create_app(settings)
 

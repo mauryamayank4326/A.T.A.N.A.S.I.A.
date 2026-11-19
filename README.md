@@ -20,35 +20,57 @@ Longer-term goals include:
 
 ## Current Status
 
-Development milestone: 0.28.0
+Development milestone: 0.29.0
 
-Lifecycle: Day 28 / 50
+Lifecycle: Day 29 / 50
 
-Day 28 establishes reliable transaction management for reconnaissance data.
+Days 26–28 introduced persistence, concurrent reconnaissance execution, and transaction management.
 
-The application now has three relevant capabilities:
+Day 29 introduces a formal lifecycle for the Scan model.
 
-Day 26: reconnaissance observations can be persisted through SQLAlchemy.
+The existing scan statuses are:
 
-Day 27: independent reconnaissance tasks can execute concurrently and produce a structured execution report.
+PENDING
 
-Day 28: successful reconnaissance results can be persisted atomically.
+RUNNING
 
-The persistence layer must not commit individual observations independently. If an operation fails halfway through, previously inserted observations from the same persistence operation must not remain committed.
+COMPLETED
 
-Day 28 deliverables
+FAILED
 
-Add an orchestration-level persistence coordinator.
+The lifecycle service will control transitions between these states.
 
-Validate the reconnaissance execution report before database writes.
+Expected lifecycle
 
-Persist successful Shodan and TCP results within one transaction.
+          Scan Created
+               |
+               v
+            PENDING
+               |
+               v
+            RUNNING
+            /     \
+           /       \
+          v         v
+     COMPLETED    FAILED
 
-Roll back the transaction when persistence raises an exception.
+A scan should not be marked COMPLETED simply because the reconnaissance tasks have finished. Its required persistence operations must also have succeeded.
 
-Preserve the Day 26 persistence service's flush-only behavior.
+Day 29 deliverables
 
-Add tests for successful commits, rollbacks, and unsuccessful reconnaissance tasks.
+Implement a dedicated scan lifecycle service.
+
+Implement validated status transitions.
+
+Set started_at when a scan enters RUNNING.
+
+Set completed_at when a scan reaches a terminal state.
+
+Prevent invalid transitions.
+
+Handle execution and persistence failures consistently.
+
+Add lifecycle unit and database integration tests.
 
 ```bash
 python3 -m venv .venv
