@@ -7,6 +7,7 @@ import pytest
 from app.services.orchestration.reconnaissance import (
     ReconTask,
     ReconTaskStatus,
+    build_email_task,
     run_concurrent_reconnaissance,
 )
 
@@ -207,3 +208,25 @@ async def test_individual_task_timeout_overrides_default():
     )
 
     assert report.successful_tasks == 1
+
+
+@pytest.mark.asyncio
+async def test_email_task_extracts_from_precollected_source_texts():
+    task = build_email_task(
+        [
+            ("https://example.com/contact", "security@example.com"),
+            ("https://example.org/about", "info@example.org"),
+        ]
+    )
+
+    report = await run_concurrent_reconnaissance(tasks=[task])
+
+    assert report.results[0].name == "email_harvest"
+    assert report.results[0].status == ReconTaskStatus.SUCCESS
+    assert [
+        (observation.email, observation.source)
+        for observation in report.results[0].value
+    ] == [
+        ("security@example.com", "https://example.com/contact"),
+        ("info@example.org", "https://example.org/about"),
+    ]

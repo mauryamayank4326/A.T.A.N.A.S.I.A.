@@ -9,6 +9,7 @@ from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import dataclass
 from enum import Enum
 
+from app.services.recon.email_harvester import EmailObservation, extract_emails
 from app.services.recon.shodan import search_shodan_hosts
 from app.services.recon.tcp_probe import scan_tcp_ports
 
@@ -88,6 +89,30 @@ class ReconExecutionReport:
     def completed_successfully(self) -> bool:
         """Return true only when every task succeeded."""
         return self.total_tasks > 0 and self.successful_tasks == self.total_tasks
+
+
+def build_email_task(
+    source_texts: Sequence[tuple[str, str]],
+) -> ReconTask:
+    """Build an email-extraction task from already-collected source texts."""
+
+    async def execute() -> tuple[EmailObservation, ...]:
+        observations: list[EmailObservation] = []
+
+        for source, content in source_texts:
+            observations.extend(
+                extract_emails(
+                    text=content,
+                    source=source,
+                )
+            )
+
+        return tuple(observations)
+
+    return ReconTask(
+        name="email_harvest",
+        execute=execute,
+    )
 
 
 def _validate_timeout(value: float) -> None:
