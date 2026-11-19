@@ -2,75 +2,71 @@
 
 **Multi-source Analysis for Uncovering Reconnaissance & Yielding Actionable-intel**
 
-Modern OSINT & Threat Recon Dashboard.
+M.A.U.R.Y.A. is an asynchronous External Attack Surface Management (EASM) and
+Cyber Threat Intelligence (CTI) reconnaissance platform. Its goal is to
+coordinate modular reconnaissance tasks, persist useful findings, and make
+attack-surface intelligence actionable.
 
-## Mission
+## Current status
 
-M.A.U.R.Y.A. is an asynchronous External Attack Surface Management
-(EASM) and Cyber Threat Intelligence (CTI) reconnaissance platform.
+- **Development milestone:** 0.30.0
+- **Lifecycle:** Day 30 / 50
 
-Longer-term goals include:
+Days 26–29 established the foundations for reconnaissance task orchestration,
+scan lifecycle management, and persistence. Day 30 adds email extraction from
+text supplied by authorized sources.
 
-- asynchronous network collection;
-- modular OSINT workers;
-- relational intelligence persistence;
-- fault-isolated reconnaissance tasks;
-- operational attack-surface visualization;
-- structured forensic export.
+### Email harvesting
 
-## Current Status
+The email harvester:
 
-Development milestone: 0.29.0
+- extracts candidate addresses from supplied text;
+- normalizes email addresses while preserving the local-part representation;
+- rejects malformed or unsupported candidates;
+- deduplicates addresses case-insensitively within each source text; and
+- attaches the source identifier to each structured observation.
 
-Lifecycle: Day 29 / 50
+`build_email_task(source_texts)` wraps pre-collected `(source, text)` pairs in an
+independent `email_harvest` orchestration task. For example:
 
-Days 26–28 introduced persistence, concurrent reconnaissance execution, and transaction management.
+```python
+from app.services.orchestration.reconnaissance import (
+    build_email_task,
+    run_concurrent_reconnaissance,
+)
 
-Day 29 introduces a formal lifecycle for the Scan model.
+source_texts = [
+    ("https://example.com/contact", "Contact security@example.com"),
+]
 
-The existing scan statuses are:
+report = await run_concurrent_reconnaissance(
+    tasks=[build_email_task(source_texts)]
+)
+```
 
-PENDING
+This feature processes text provided by the caller; it does not fetch pages or
+add a network collector. Source retrieval and authorization remain the
+responsibility of the relevant collector.
 
-RUNNING
+### Persistence status
 
-COMPLETED
+The `DiscoveredEmail` ORM model is present, but the Day 28 persistence
+coordinator currently recognizes only the `shodan` and `tcp_ports` task names.
+It does not automatically persist `email_harvest` results. Integrating email
+observations with persistence requires an explicit extension of that contract
+and verification against the model.
 
-FAILED
+### Scope and authorization
 
-The lifecycle service will control transitions between these states.
+Use M.A.U.R.Y.A. only for authorized OSINT and defensive security assessments.
+Email harvesting is limited to extracting addresses from supplied source text.
+It does not implement mailbox access, credential collection, email account
+verification, unsolicited messaging, or indiscriminate crawling.
 
-Expected lifecycle
+## Getting started
 
-          Scan Created
-               |
-               v
-            PENDING
-               |
-               v
-            RUNNING
-            /     \
-           /       \
-          v         v
-     COMPLETED    FAILED
-
-A scan should not be marked COMPLETED simply because the reconnaissance tasks have finished. Its required persistence operations must also have succeeded.
-
-Day 29 deliverables
-
-Implement a dedicated scan lifecycle service.
-
-Implement validated status transitions.
-
-Set started_at when a scan enters RUNNING.
-
-Set completed_at when a scan reaches a terminal state.
-
-Prevent invalid transitions.
-
-Handle execution and persistence failures consistently.
-
-Add lifecycle unit and database integration tests.
+Create and activate a virtual environment, then install the development
+dependencies:
 
 ```bash
 python3 -m venv .venv
@@ -78,18 +74,18 @@ source .venv/bin/activate
 python -m pip install -r requirements-dev.txt
 ```
 
-Create a local environment file if you want to override the defaults:
+To override local defaults, create an environment file:
 
 ```bash
 cp .env.example .env
 ```
 
-The app reads settings with the `MAURYA_` prefix. By default, it uses
-`sqlite+aiosqlite:///./data/osint.db` and serves the health endpoint at
-`http://127.0.0.1:8000/api/v1/health`. The API prefix defaults to `/api/v1`;
-it can be overridden through application settings.
+Settings use the `MAURYA_` prefix. By default, the application uses
+`sqlite+aiosqlite:///./data/osint.db` and serves its health endpoint at
+`http://127.0.0.1:8000/api/v1/health`. The API prefix defaults to `/api/v1` and
+can be overridden through application settings.
 
-Run the app:
+Run the application:
 
 ```bash
 uvicorn app.main:app --reload
