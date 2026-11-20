@@ -4,12 +4,15 @@ from __future__ import annotations
 
 from collections.abc import AsyncGenerator, Callable
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from app.api.routes.dashboard import router as dashboard_router
 from app.api.v1.router import api_router
 from app.config import Settings, get_settings
 from app.core.database import (
@@ -70,6 +73,11 @@ def create_application(
         debug=runtime_settings.debug,
         lifespan=create_lifespan(runtime_settings),
     )
+    application.mount(
+        "/static",
+        StaticFiles(directory=Path(__file__).parent / "static"),
+        name="static",
+    )
 
     application.add_exception_handler(APIError, api_error_handler)
     application.add_exception_handler(
@@ -103,6 +111,7 @@ def create_application(
         api_router,
         prefix=runtime_settings.api_prefix,
     )
+    application.include_router(dashboard_router)
 
     if runtime_settings.api_prefix == "/api/v1":
         application.include_router(api_router)

@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply bg-ops-background text-slate-100 antialiased;
+    }
+
+    h1, h2, h3 {
+        @apply tracking-tight;
+    }
+}
+
+@layer components {
+    .ops-panel {
+        @apply rounded-xl border border-ops-border
+               bg-ops-panel p-5 shadow-sm;
+    }
+
+    .ops-label {
+        @apply text-xs font-semibold uppercase
+               tracking-wider text-ops-muted;
+    }
+
+    .ops-value {
+        @apply mt-2 text-3xl font-bold text-white;
+    }
+
+    .ops-table {
+        @apply w-full text-left text-sm;
+    }
+
+    .ops-table th {
+        @apply border-b border-ops-border px-4 py-3
+               text-xs font-semibold uppercase
+               tracking-wider text-ops-muted;
+    }
+
+    .ops-table td {
+        @apply border-b border-ops-border px-4 py-4;
+    }
+}

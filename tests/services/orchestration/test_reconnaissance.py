@@ -223,10 +223,7 @@ async def test_email_task_extracts_from_precollected_source_texts():
 
     assert report.results[0].name == "email_harvest"
     assert report.results[0].status == ReconTaskStatus.SUCCESS
-    assert [
-        (observation.email, observation.source)
-        for observation in report.results[0].value
-    ] == [
+    assert [(observation.email, observation.source) for observation in report.results[0].value] == [
         ("security@example.com", "https://example.com/contact"),
         ("info@example.org", "https://example.org/about"),
     ]
