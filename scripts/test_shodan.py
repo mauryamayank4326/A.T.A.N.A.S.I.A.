@@ -11,10 +11,7 @@ from app.services.recon.shodan import search_shodan_hosts
 async def main() -> None:
     settings = get_settings()
 
-    if (
-        settings.shodan_api_key is None
-        or not settings.shodan_api_key.get_secret_value().strip()
-    ):
+    if settings.shodan_api_key is None or not settings.shodan_api_key.get_secret_value().strip():
         raise RuntimeError("Configure MAURYA_SHODAN_API_KEY first.")
 
     timeout = httpx.Timeout(settings.http_timeout_seconds)
