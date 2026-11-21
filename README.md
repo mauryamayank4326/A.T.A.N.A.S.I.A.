@@ -19,19 +19,18 @@ M.A.U.R.Y.A. is a Python-based external attack surface management and cyber thre
 
 ## Current status
 
-- **Development milestone:** 0.30.0
-- **Lifecycle:** Day 30 / 50
+- **Development milestone:** 0.33.0
+- **Lifecycle:** Day 33 / 50
 
-Build a functional target console that:
-- Lists registered reconnaissance targets.
-- Displays each target's domain and scan count.
-- Shows the latest scan status and timestamp.
-- Supports pagination to avoid loading an unbounded target list.
-- Provides a target detail page with its scan history.
-- Uses the shared Day 31 dashboard layout and Tailwind styles.
-- Keeps database access asynchronous and read-only.
+Build a unified reconnaissance telemetry interface that allows an operator to:
+- Review discovered subdomains.
+- Inspect exposed TCP ports and their identified services.
+- Review harvested email addresses and their sources.
+- Filter records by registered target.
+- Navigate large result sets using pagination.
+- Distinguish stored observations from scan lifecycle status.
 
-Expected outcome: an operator can navigate from the dashboard to a target list and inspect a target's reconnaissance history.
+Expected result: the dashboard provides a practical overview of reconnaissance findings without requiring an operator to query the database manually.
 
 ### Dashboard design direction
 

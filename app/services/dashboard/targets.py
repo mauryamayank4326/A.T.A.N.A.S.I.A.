@@ -1,4 +1,3 @@
-
 """Read-only query operations for the dashboard target console."""
 
 from collections.abc import Sequence
@@ -32,11 +31,7 @@ def _validate_pagination(page: int, page_size: int) -> None:
     if isinstance(page, bool) or not isinstance(page, int) or page < 1:
         raise ValueError("page must be a positive integer")
 
-    if (
-        isinstance(page_size, bool)
-        or not isinstance(page_size, int)
-        or not 1 <= page_size <= 100
-    ):
+    if isinstance(page_size, bool) or not isinstance(page_size, int) or not 1 <= page_size <= 100:
         raise ValueError("page_size must be between 1 and 100")
 
 
@@ -79,11 +74,7 @@ async def get_target_by_id(
 ) -> Target | None:
     """Retrieve one target and its scans."""
 
-    statement = (
-        select(Target)
-        .where(Target.id == target_id)
-        .options(selectinload(Target.scans))
-    )
+    statement = select(Target).where(Target.id == target_id).options(selectinload(Target.scans))
 
     result = await session.scalars(statement)
     return result.unique().one_or_none()

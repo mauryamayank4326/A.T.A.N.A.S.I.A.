@@ -1,0 +1,81 @@
+
+<section class="overflow-hidden rounded-xl border border-slate-800
+                bg-slate-900">
+
+    <div class="border-b border-slate-800 px-5 py-4">
+        <h2 class="font-semibold text-white">Exposed Ports</h2>
+    </div>
+
+    {% if telemetry.ports %}
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-800">
+            <thead class="bg-slate-950/60">
+                <tr class="text-left text-xs uppercase
+                           tracking-wider text-slate-400">
+                    <th class="px-5 py-4">Host</th>
+                    <th class="px-5 py-4">Port</th>
+                    <th class="px-5 py-4">Protocol</th>
+                    <th class="px-5 py-4">Service</th>
+                    <th class="px-5 py-4">Target</th>
+                    <th class="px-5 py-4">Scan ID</th>
+                </tr>
+            </thead>
+
+            <tbody class="divide-y divide-slate-800">
+                {% for item, scan, target in telemetry.ports %}
+                <tr>
+                    <td class="px-5 py-4 text-sm text-white">
+                        {{ item.host }}
+                    </td>
+                    <td class="px-5 py-4 font-mono text-sm text-cyan-300">
+                        {{ item.port }}
+                    </td>
+                    <td class="px-5 py-4 text-sm text-slate-300">
+                        {{ item.protocol }}
+                    </td>
+                    <td class="px-5 py-4 text-sm text-slate-300">
+                        {{ item.service_name or "Unknown" }}
+                    </td>
+                    <td class="px-5 py-4 text-sm text-slate-400">
+                        {{ target.domain }}
+                    </td>
+                    <td class="px-5 py-4 font-mono text-xs text-slate-400">
+                        {{ scan.id }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="px-5 py-8 text-sm text-slate-400">
+        No exposed-port observations found.
+    </p>
+    {% endif %}
+
+    {% if telemetry.port_total_pages > 1 %}
+    <nav class="flex items-center justify-between border-t border-slate-800 px-5 py-4"
+         aria-label="Exposed-port pagination">
+        {% if telemetry.port_page > 1 %}
+        <a href="{{ request.url.include_query_params(
+            port_page=telemetry.port_page - 1,
+            page_size=telemetry.page_size
+        ) }}" class="text-sm text-cyan-300 hover:text-cyan-200">Previous</a>
+        {% else %}
+        <span class="text-sm text-slate-600">Previous</span>
+        {% endif %}
+        <span class="text-sm text-slate-400">
+            Page {{ telemetry.port_page }} of {{ telemetry.port_total_pages }}
+        </span>
+        {% if telemetry.port_page < telemetry.port_total_pages %}
+        <a href="{{ request.url.include_query_params(
+            port_page=telemetry.port_page + 1,
+            page_size=telemetry.page_size
+        ) }}" class="text-sm text-cyan-300 hover:text-cyan-200">Next</a>
+        {% else %}
+        <span class="text-sm text-slate-600">Next</span>
+        {% endif %}
+    </nav>
+    {% endif %}
+
+</section>
