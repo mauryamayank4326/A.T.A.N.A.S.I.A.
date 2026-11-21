@@ -22,20 +22,16 @@ M.A.U.R.Y.A. is a Python-based external attack surface management and cyber thre
 - **Development milestone:** 0.30.0
 - **Lifecycle:** Day 30 / 50
 
-Our current motive is to establish the foundation of the presentation layer.
+Build a functional target console that:
+- Lists registered reconnaissance targets.
+- Displays each target's domain and scan count.
+- Shows the latest scan status and timestamp.
+- Supports pagination to avoid loading an unbounded target list.
+- Provides a target detail page with its scan history.
+- Uses the shared Day 31 dashboard layout and Tailwind styles.
+- Keeps database access asynchronous and read-only.
 
-Until now, most of M.A.U.R.Y.A.'s capabilities have been developed at the backend level. The dashboard will make operational information easier to inspect and manage.
-
-### Day 31 deliverables
-
-- Configure Jinja2 template rendering.
-- Create a reusable dashboard base layout.
-- Establish the Dark Ops visual theme.
-- Create the dashboard overview page.
-- Display scan status summaries.
-- Display recently created scans.
-- Configure static asset delivery.
-- Prepare the dashboard for the target console and telemetry features.
+Expected outcome: an operator can navigate from the dashboard to a target list and inspect a target's reconnaissance history.
 
 ### Dashboard design direction
 
