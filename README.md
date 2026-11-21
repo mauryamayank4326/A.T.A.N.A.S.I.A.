@@ -19,8 +19,8 @@ M.A.U.R.Y.A. is a Python-based external attack surface management and cyber thre
 
 ## Current status
 
-- **Development milestone:** 0.30.0
-- **Lifecycle:** Day 30 / 50
+- **Development milestone:** 0.32.0
+- **Lifecycle:** Day 32 / 50
 
 Build a functional target console that:
 - Lists registered reconnaissance targets.
