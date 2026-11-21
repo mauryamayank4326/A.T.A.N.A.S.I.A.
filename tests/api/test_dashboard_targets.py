@@ -1,4 +1,3 @@
-
 """Tests for the dashboard target console."""
 
 import asyncio

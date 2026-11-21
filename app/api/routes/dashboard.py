@@ -12,6 +12,7 @@ from sqlalchemy.orm import selectinload
 from app.api.deps import get_db_session
 from app.models.scan import Scan, ScanStatus
 from app.services.dashboard.targets import get_target_by_id, list_targets
+from app.services.dashboard.telemetry import get_telemetry
 
 APP_DIR = Path(__file__).resolve().parents[2]
 
@@ -125,5 +126,42 @@ async def dashboard_target_detail(
         context={
             "target": target,
             "scans": scans,
+        },
+    )
+
+
+@router.get(
+    "/telemetry",
+    response_class=HTMLResponse,
+    name="dashboard_telemetry",
+)
+async def dashboard_telemetry(
+    request: Request,
+    session: Annotated[AsyncSession, Depends(get_db_session)],
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=20, ge=1, le=100),
+    target_id: Annotated[UUID | None, Query()] = None,
+    subdomain_page: Annotated[int | None, Query(ge=1)] = None,
+    port_page: Annotated[int | None, Query(ge=1)] = None,
+    email_page: Annotated[int | None, Query(ge=1)] = None,
+):
+    """Render persisted reconnaissance telemetry."""
+
+    telemetry = await get_telemetry(
+        session,
+        page=page,
+        page_size=page_size,
+        target_id=target_id,
+        subdomain_page=subdomain_page,
+        port_page=port_page,
+        email_page=email_page,
+    )
+
+    return templates.TemplateResponse(
+        request=request,
+        name="dashboard/telemetry/index.html",
+        context={
+            "telemetry": telemetry,
+            "target_id": target_id,
         },
     )

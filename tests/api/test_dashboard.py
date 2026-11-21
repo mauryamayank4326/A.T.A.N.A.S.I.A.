@@ -40,7 +40,8 @@ def test_dashboard_target_routes_are_registered_once(client):
     paths = [
         route.path
         for route in dashboard_router.routes
-        if route.path in {
+        if route.path
+        in {
             "/dashboard/targets",
             "/dashboard/targets/{target_id}",
         }
