@@ -61,11 +61,14 @@
                         Reconnaissance
                     </a>
 
-                    <a href="/dashboard"
-                       class="block rounded-lg px-4 py-3
-                              text-sm text-slate-300
-                              hover:bg-slate-800">
-                        Targets
+                    <a
+                        href="{{ request.url_for('dashboard_targets') }}"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2
+                               text-sm text-slate-300 hover:bg-slate-800
+                               hover:text-cyan-300"
+                    >
+                        <span aria-hidden="true">◎</span>
+                        <span>Target Console</span>
                     </a>
 
                     <a href="/dashboard"

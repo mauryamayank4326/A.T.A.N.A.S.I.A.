@@ -1,3 +1,6 @@
+from uuid import uuid4
+
+
 def test_dashboard_returns_html(client):
     response = client.get("/dashboard/")
 
@@ -29,3 +32,31 @@ def test_dashboard_handles_empty_scan_database(client):
 
     assert response.status_code == 200
     assert "No reconnaissance scans have been recorded." in response.text
+
+
+def test_dashboard_target_routes_are_registered_once(client):
+    from app.api.routes.dashboard import router as dashboard_router
+
+    paths = [
+        route.path
+        for route in dashboard_router.routes
+        if route.path in {
+            "/dashboard/targets",
+            "/dashboard/targets/{target_id}",
+        }
+    ]
+
+    assert paths.count("/dashboard/targets") == 1
+    assert paths.count("/dashboard/targets/{target_id}") == 1
+
+
+def test_dashboard_target_detail_requires_uuid(client):
+    response = client.get("/dashboard/targets/not-a-uuid")
+
+    assert response.status_code == 422
+
+
+def test_unknown_uuid_target_returns_404(client):
+    response = client.get(f"/dashboard/targets/{uuid4()}")
+
+    assert response.status_code == 404
