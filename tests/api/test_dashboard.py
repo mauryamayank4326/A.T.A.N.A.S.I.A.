@@ -8,6 +8,51 @@ def test_dashboard_returns_html(client):
     assert "text/html" in response.headers["content-type"]
 
 
+def test_dashboard_routes_are_registered(client):
+    dashboard_paths = {
+        path for path in client.app.openapi()["paths"] if path.startswith("/dashboard")
+    }
+
+    assert dashboard_paths == {
+        "/dashboard/",
+        "/dashboard/targets",
+        "/dashboard/targets/{target_id}",
+        "/dashboard/telemetry",
+    }
+
+
+def test_dashboard_stylesheet_is_mounted(client):
+    response = client.get("/static/css/app.css")
+
+    assert response.status_code == 200
+    assert "text/css" in response.headers["content-type"]
+
+
+def test_dashboard_overview_renders(client):
+    response = client.get("/dashboard")
+
+    assert response.status_code == 200
+    assert "Dashboard Overview" in response.text
+
+
+def test_dashboard_targets_page_renders(client):
+    response = client.get("/dashboard/targets")
+
+    assert response.status_code == 200
+
+
+def test_dashboard_telemetry_page_renders(client):
+    response = client.get("/dashboard/telemetry")
+
+    assert response.status_code == 200
+
+
+def test_dashboard_unknown_route_returns_404(client):
+    response = client.get("/dashboard/not-a-real-page")
+
+    assert response.status_code == 404
+
+
 def test_dashboard_displays_overview(client):
     response = client.get("/dashboard/")
 
@@ -31,7 +76,8 @@ def test_dashboard_handles_empty_scan_database(client):
     response = client.get("/dashboard/")
 
     assert response.status_code == 200
-    assert "No reconnaissance scans have been recorded." in response.text
+    assert "No scans available" in response.text
+    assert "Your recent scan activity will appear here." in response.text
 
 
 def test_dashboard_target_routes_are_registered_once(client):

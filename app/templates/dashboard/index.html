@@ -120,95 +120,16 @@ M.A.U.R.Y.A. | Dashboard Overview
     <div class="overflow-x-auto rounded-xl
                 border border-ops-border bg-ops-panel">
 
-        <table class="ops-table">
-
-            <thead>
-                <tr>
-                    <th>Scan ID</th>
-                    <th>Target</th>
-                    <th>Status</th>
-                    <th>Started</th>
-                    <th>Completed</th>
-                </tr>
-            </thead>
-
-            <tbody>
-
-                {% for scan in recent_scans %}
-
-                <tr class="hover:bg-slate-800/40">
-
-                    <td class="font-mono text-xs text-slate-400">
-                        {{ scan.id }}
-                    </td>
-
-                    <td class="font-medium text-white">
-                        {{ scan.target.domain }}
-                    </td>
-
-                    <td>
-
-                        {% if scan.status.value == "completed" %}
-
-                        <span class="rounded-full bg-green-500/10
-                                     px-3 py-1 text-xs
-                                     text-green-400">
-                            Completed
-                        </span>
-
-                        {% elif scan.status.value == "running" %}
-
-                        <span class="rounded-full bg-sky-500/10
-                                     px-3 py-1 text-xs
-                                     text-sky-400">
-                            Running
-                        </span>
-
-                        {% elif scan.status.value == "failed" %}
-
-                        <span class="rounded-full bg-red-500/10
-                                     px-3 py-1 text-xs
-                                     text-red-400">
-                            Failed
-                        </span>
-
-                        {% else %}
-
-                        <span class="rounded-full bg-amber-500/10
-                                     px-3 py-1 text-xs
-                                     text-amber-400">
-                            Pending
-                        </span>
-
-                        {% endif %}
-
-                    </td>
-
-                    <td class="text-xs text-ops-muted">
-                        {{ scan.started_at or "—" }}
-                    </td>
-
-                    <td class="text-xs text-ops-muted">
-                        {{ scan.completed_at or "—" }}
-                    </td>
-
-                </tr>
-
-                {% else %}
-
-                <tr>
-                    <td colspan="5"
-                        class="px-4 py-10 text-center
-                               text-sm text-ops-muted">
-                        No reconnaissance scans have been recorded.
-                    </td>
-                </tr>
-
-                {% endfor %}
-
-            </tbody>
-
-        </table>
+        {% if recent_scans %}
+            {% include "dashboard/_recent_scans.html" %}
+        {% else %}
+            {% with
+                title="No scans available",
+                message="Your recent scan activity will appear here."
+            %}
+                {% include "dashboard/_empty_state.html" %}
+            {% endwith %}
+        {% endif %}
 
     </div>
 

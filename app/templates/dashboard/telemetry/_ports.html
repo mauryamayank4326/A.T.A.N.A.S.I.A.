@@ -48,9 +48,12 @@
         </table>
     </div>
     {% else %}
-    <p class="px-5 py-8 text-sm text-slate-400">
-        No exposed-port observations found.
-    </p>
+    {% with
+        title="No exposed ports found",
+        message="Run an authorized reconnaissance scan to populate this table."
+    %}
+        {% include "dashboard/_empty_state.html" %}
+    {% endwith %}
     {% endif %}
 
     {% if telemetry.port_total_pages > 1 %}

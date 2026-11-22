@@ -18,6 +18,7 @@ def test_target_console_renders(client: TestClient, target: Target):
     assert "Target Console" in response.text
     assert "Target Inventory" in response.text
     assert target.domain in response.text
+    assert f"/dashboard/targets/{target.id}" in response.text
     assert "Not scanned" in response.text
     assert "api_key" not in response.text
     assert "internal scan error" not in response.text
@@ -53,6 +54,17 @@ def test_target_with_multiple_scans_shows_count_and_latest_failed_status(
     assert response.status_code == 200
     assert re.search(r">\s*2\s*</td>", response.text)
     assert re.search(r">\s*failed\s*</span>", response.text)
+    assert "bg-red-500/10 text-red-400" in response.text
+
+    detail_response = client.get(f"/dashboard/targets/{target.id}")
+    assert detail_response.status_code == 200
+    assert "bg-emerald-500/10 text-emerald-400" in detail_response.text
+    assert "bg-red-500/10 text-red-400" in detail_response.text
+
+    overview_response = client.get("/dashboard/")
+    assert overview_response.status_code == 200
+    assert "bg-emerald-500/10 text-emerald-400" in overview_response.text
+    assert "bg-red-500/10 text-red-400" in overview_response.text
 
 
 def test_target_console_empty_state(client: TestClient):

@@ -22,16 +22,18 @@ M.A.U.R.Y.A. is a Python-based external attack surface management and cyber thre
 - **Development milestone:** 0.34.0
 - **Lifecycle:** Day 34 / 50
 
-By the end of Day 34, the dashboard should support:
-- Filtering telemetry by target and scan.
-- Searching subdomains, hostnames, and email addresses.
-- Filtering exposed ports by port number, protocol, and service.
-- Sorting results using a controlled allowlist of fields.
-- Consistent pagination with validated page and page-size parameters.
-- Preserving filters when navigating between pages.
-- Clear empty states when no records match.
+Today we consolidate the dashboard components developed throughout Week 7.
 
-Engineering principle: filter and paginate at the database query level. Do not load every record into Python and filter it in memory. Validate user-controlled query parameters and allowlist sort fields rather than interpolating user input into SQL.
+The objectives are:
+1. Integrate the dashboard overview, target console, and telemetry views.
+2. Standardize navigation and page layouts.
+3. Improve loading, empty, and error states.
+4. Ensure filters and pagination behave consistently.
+5. Improve usability and accessibility.
+6. Review route registration, template rendering, and static assets.
+7. Run dashboard-wide regression tests.
+
+Expected outcome: A consistent, integrated dashboard that provides a reliable interface for inspecting previously collected reconnaissance results.
 
 ### Dashboard design direction
 

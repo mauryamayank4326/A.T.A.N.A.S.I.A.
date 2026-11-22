@@ -102,9 +102,10 @@ def test_telemetry_page_renders(client: TestClient):
     assert "Discovered Subdomains" in response.text
     assert "Exposed Ports" in response.text
     assert "Discovered Email Addresses" in response.text
-    assert "No subdomain observations found." in response.text
-    assert "No exposed-port observations found." in response.text
-    assert "No discovered email observations found." in response.text
+    assert "No subdomains discovered" in response.text
+    assert "No exposed ports found" in response.text
+    assert "No email addresses discovered" in response.text
+    assert response.text.count("Run an authorized reconnaissance scan to populate this table.") == 3
 
 
 def test_telemetry_rejects_invalid_page(client: TestClient):
