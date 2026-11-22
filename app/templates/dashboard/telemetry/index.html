@@ -21,6 +21,78 @@
         </p>
     </header>
 
+    <form method="get" action="{{ request.url.path }}"
+          class="mb-6 grid grid-cols-1 gap-3 md:grid-cols-4">
+
+        <label class="flex flex-col gap-1">
+            <span class="text-sm text-slate-400">Search telemetry</span>
+            <input
+                type="search"
+                name="search"
+                value="{{ filters.search or '' }}"
+                maxlength="200"
+                placeholder="Hostname, service, or email"
+                class="rounded border border-slate-700 bg-slate-900 px-3 py-2"
+            >
+        </label>
+
+        <label class="flex flex-col gap-1">
+            <span class="text-sm text-slate-400">Target ID</span>
+            <input
+                type="text"
+                name="target_id"
+                value="{{ filters.target_id or '' }}"
+                class="rounded border border-slate-700 bg-slate-900 px-3 py-2"
+            >
+        </label>
+
+        <label class="flex flex-col gap-1">
+            <span class="text-sm text-slate-400">Scan ID</span>
+            <input
+                type="text"
+                name="scan_id"
+                value="{{ filters.scan_id or '' }}"
+                class="rounded border border-slate-700 bg-slate-900 px-3 py-2"
+            >
+        </label>
+
+        <label class="flex flex-col gap-1">
+            <span class="text-sm text-slate-400">Page size</span>
+            <select
+                name="page_size"
+                class="rounded border border-slate-700 bg-slate-900 px-3 py-2"
+            >
+                {% for size in [10, 25, 50, 100] %}
+                <option
+                    value="{{ size }}"
+                    {% if filters.page_size == size %}selected{% endif %}
+                >
+                    {{ size }} records
+                </option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <input type="hidden" name="sort_by" value="{{ filters.sort_by }}">
+        <input type="hidden" name="sort_order" value="{{ filters.sort_order }}">
+
+        <div class="flex items-end gap-2 md:col-span-4">
+            <button
+                type="submit"
+                class="rounded bg-cyan-700 px-4 py-2 text-white hover:bg-cyan-600"
+            >
+                Apply filters
+            </button>
+
+            <a
+                href="{{ request.url.path }}"
+                class="rounded border border-slate-700 px-4 py-2"
+            >
+                Clear filters
+            </a>
+        </div>
+    </form>
+
     <div class="grid gap-4 sm:grid-cols-3">
 
         <div class="rounded-xl border border-slate-800

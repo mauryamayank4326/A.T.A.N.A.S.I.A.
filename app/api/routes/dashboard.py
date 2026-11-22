@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Literal
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
@@ -139,11 +139,18 @@ async def dashboard_telemetry(
     request: Request,
     session: Annotated[AsyncSession, Depends(get_db_session)],
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=20, ge=1, le=100),
+    page_size: int = Query(default=25, ge=1, le=100),
     target_id: Annotated[UUID | None, Query()] = None,
+    scan_id: Annotated[UUID | None, Query()] = None,
+    search: Annotated[str | None, Query(max_length=200)] = None,
+    sort_by: Annotated[str, Query(max_length=50)] = "name",
+    sort_order: Literal["asc", "desc"] = Query(default="asc"),
     subdomain_page: Annotated[int | None, Query(ge=1)] = None,
     port_page: Annotated[int | None, Query(ge=1)] = None,
     email_page: Annotated[int | None, Query(ge=1)] = None,
+    subdomain_query: Annotated[str | None, Query()] = None,
+    port_query: Annotated[str | None, Query()] = None,
+    email_query: Annotated[str | None, Query()] = None,
 ):
     """Render persisted reconnaissance telemetry."""
 
@@ -152,9 +159,16 @@ async def dashboard_telemetry(
         page=page,
         page_size=page_size,
         target_id=target_id,
+        scan_id=scan_id,
+        search=search,
+        sort_by=sort_by,
+        sort_order=sort_order,
         subdomain_page=subdomain_page,
         port_page=port_page,
         email_page=email_page,
+        subdomain_query=subdomain_query,
+        port_query=port_query,
+        email_query=email_query,
     )
 
     return templates.TemplateResponse(
@@ -163,5 +177,14 @@ async def dashboard_telemetry(
         context={
             "telemetry": telemetry,
             "target_id": target_id,
+            "filters": {
+                "target_id": target_id,
+                "scan_id": scan_id,
+                "search": search,
+                "sort_by": sort_by,
+                "sort_order": sort_order,
+                "page": page,
+                "page_size": page_size,
+            },
         },
     )
