@@ -1,0 +1,46 @@
+<table class="ops-table">
+
+    <thead>
+        <tr>
+            <th>Scan ID</th>
+            <th>Target</th>
+            <th>Status</th>
+            <th>Started</th>
+            <th>Completed</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for scan in recent_scans %}
+
+        <tr class="hover:bg-slate-800/40">
+
+            <td class="font-mono text-xs text-slate-400">
+                {{ scan.id }}
+            </td>
+
+            <td class="font-medium text-white">
+                {{ scan.target.domain }}
+            </td>
+
+            <td>
+                {% set status = scan.status.value | title %}
+                {% include "dashboard/_status.html" %}
+            </td>
+
+            <td class="text-xs text-ops-muted">
+                {{ scan.started_at or "—" }}
+            </td>
+
+            <td class="text-xs text-ops-muted">
+                {{ scan.completed_at or "—" }}
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>

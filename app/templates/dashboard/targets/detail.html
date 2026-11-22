@@ -75,10 +75,11 @@
                             {{ scan.id }}
                         </td>
 
-                        <td class="px-5 py-4 text-sm text-cyan-300">
-                            {{ scan.status.value
-                               if scan.status.value is defined
-                               else scan.status }}
+                        <td class="px-5 py-4">
+                            {% set status = scan.status.value
+                                if scan.status.value is defined
+                                else scan.status %}
+                            {% include "dashboard/_status.html" %}
                         </td>
 
                         <td class="px-5 py-4 text-sm text-slate-400">
@@ -96,14 +97,12 @@
         </div>
 
         {% else %}
-        <div class="px-6 py-12 text-center">
-            <h3 class="font-semibold text-white">
-                No reconnaissance history
-            </h3>
-            <p class="mt-2 text-sm text-slate-400">
-                This target has not been scanned yet.
-            </p>
-        </div>
+        {% with
+            title="No reconnaissance history",
+            message="Run an authorized reconnaissance scan to populate this target's scan history."
+        %}
+            {% include "dashboard/_empty_state.html" %}
+        {% endwith %}
         {% endif %}
 
     </div>

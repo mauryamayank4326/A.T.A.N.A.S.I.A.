@@ -86,14 +86,10 @@
 
                         <td class="px-5 py-4">
                             {% if latest_scan %}
-                                <span class="rounded-full border
-                                    border-slate-700 px-3 py-1
-                                    text-xs text-cyan-300">
-                                    {{ latest_scan.status.value
-                                       if latest_scan.status.value
-                                       is defined
-                                       else latest_scan.status }}
-                                </span>
+                                {% set status = latest_scan.status.value
+                                    if latest_scan.status.value is defined
+                                    else latest_scan.status %}
+                                {% include "dashboard/_status.html" %}
                             {% else %}
                                 <span class="text-xs text-slate-500">
                                     Not scanned
@@ -121,14 +117,12 @@
         </div>
 
         {% else %}
-        <div class="px-6 py-16 text-center">
-            <h3 class="text-lg font-semibold text-white">
-                No targets registered
-            </h3>
-            <p class="mt-2 text-sm text-slate-400">
-                Registered reconnaissance targets will appear here.
-            </p>
-        </div>
+        {% with
+            title="No targets registered",
+            message="Register a target to view its reconnaissance activity here."
+        %}
+            {% include "dashboard/_empty_state.html" %}
+        {% endwith %}
         {% endif %}
     </div>
 

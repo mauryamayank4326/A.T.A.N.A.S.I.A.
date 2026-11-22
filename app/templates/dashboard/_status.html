@@ -1,0 +1,16 @@
+{% set status_styles = {
+    "pending": "bg-amber-500/10 text-amber-400",
+    "running": "bg-cyan-500/10 text-cyan-400",
+    "completed": "bg-emerald-500/10 text-emerald-400",
+    "failed": "bg-red-500/10 text-red-400"
+} %}
+
+{% set normalized_status = status | lower %}
+{% set status_class = status_styles.get(
+    normalized_status,
+    "bg-slate-700 text-slate-300"
+) %}
+
+<span class="inline-flex rounded-full px-3 py-1 text-xs font-medium {{ status_class }}">
+    {{ status }}
+</span>

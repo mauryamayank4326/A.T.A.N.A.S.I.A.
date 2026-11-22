@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Error{% endblock %}
+
+{% block content %}
+
+<section class="mx-auto max-w-2xl rounded-xl border border-red-900/50 bg-slate-900 p-8">
+
+    <h1 class="text-xl font-bold text-red-400">
+        Unable to load this dashboard view
+    </h1>
+
+    <p class="mt-3 text-sm text-slate-400">
+        The requested information could not be displayed.
+        Please retry or return to the dashboard overview.
+    </p>
+
+    <a href="{{ request.url_for('dashboard_overview') }}"
+       class="mt-6 inline-block rounded bg-cyan-700 px-4 py-2 text-white hover:bg-cyan-600">
+        Return to dashboard
+    </a>
+
+</section>
+
+{% endblock %}
