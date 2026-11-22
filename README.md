@@ -19,18 +19,19 @@ M.A.U.R.Y.A. is a Python-based external attack surface management and cyber thre
 
 ## Current status
 
-- **Development milestone:** 0.33.0
-- **Lifecycle:** Day 33 / 50
+- **Development milestone:** 0.34.0
+- **Lifecycle:** Day 34 / 50
 
-Build a unified reconnaissance telemetry interface that allows an operator to:
-- Review discovered subdomains.
-- Inspect exposed TCP ports and their identified services.
-- Review harvested email addresses and their sources.
-- Filter records by registered target.
-- Navigate large result sets using pagination.
-- Distinguish stored observations from scan lifecycle status.
+By the end of Day 34, the dashboard should support:
+- Filtering telemetry by target and scan.
+- Searching subdomains, hostnames, and email addresses.
+- Filtering exposed ports by port number, protocol, and service.
+- Sorting results using a controlled allowlist of fields.
+- Consistent pagination with validated page and page-size parameters.
+- Preserving filters when navigating between pages.
+- Clear empty states when no records match.
 
-Expected result: the dashboard provides a practical overview of reconnaissance findings without requiring an operator to query the database manually.
+Engineering principle: filter and paginate at the database query level. Do not load every record into Python and filter it in memory. Validate user-controlled query parameters and allowlist sort fields rather than interpolating user input into SQL.
 
 ### Dashboard design direction
 
