@@ -8,6 +8,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_db_session
+from app.services.dashboard.analytics import get_analytics_overview
 from app.services.dashboard.overview import get_dashboard_overview
 from app.services.dashboard.targets import get_target_by_id, list_targets
 from app.services.dashboard.telemetry import get_telemetry
@@ -37,6 +38,29 @@ async def dashboard_overview(
         context={
             "metrics": overview.metrics,
             "recent_scans": overview.recent_scans,
+        },
+    )
+
+
+@router.get(
+    "/analytics",
+    response_class=HTMLResponse,
+    name="dashboard_analytics",
+)
+async def analytics_page(
+    request: Request,
+    session: Annotated[AsyncSession, Depends(get_db_session)],
+):
+    """Render persisted reconnaissance analytics."""
+
+    analytics = await get_analytics_overview(session)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="dashboard/analytics/index.html",
+        context={
+            "request": request,
+            "analytics": analytics,
         },
     )
 

@@ -34,7 +34,7 @@ def test_response_contains_generated_request_id(
     application = create_application(make_test_settings(database_path))
 
     with TestClient(application) as client:
-        response = client.get("/health")
+        response = client.get("/api/v1/health")
 
     assert response.status_code == 200
     assert response.json() == {
@@ -55,7 +55,7 @@ def test_valid_incoming_request_id_is_preserved(
 
     with TestClient(application) as client:
         response = client.get(
-            "/health",
+            "/api/v1/health",
             headers={"X-Request-ID": request_id},
         )
 
@@ -72,7 +72,7 @@ def test_invalid_incoming_request_id_is_replaced(
 
     with TestClient(application) as client:
         response = client.get(
-            "/health",
+            "/api/v1/health",
             headers={"X-Request-ID": "untrusted value\nfor-logs"},
         )
 
@@ -92,7 +92,7 @@ def test_request_context_is_reset_after_request(
     assert request_id_context.get() == DEFAULT_REQUEST_ID
 
     with TestClient(application) as client:
-        response = client.get("/health")
+        response = client.get("/api/v1/health")
 
     assert response.status_code == 200
     assert request_id_context.get() == DEFAULT_REQUEST_ID

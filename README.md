@@ -19,21 +19,18 @@ M.A.U.R.Y.A. is a Python-based external attack surface management and cyber thre
 
 ## Current status
 
-- **Development milestone:** 0.34.0
-- **Lifecycle:** Day 34 / 50
+- **Development milestone:** 0.36.0
+- **Lifecycle:** Day 36 / 50
 
-Today we consolidate the dashboard components developed throughout Week 7.
-
-The objectives are:
-1. Integrate the dashboard overview, target console, and telemetry views.
-2. Standardize navigation and page layouts.
-3. Improve loading, empty, and error states.
-4. Ensure filters and pagination behave consistently.
-5. Improve usability and accessibility.
-6. Review route registration, template rendering, and static assets.
-7. Run dashboard-wide regression tests.
-
-Expected outcome: A consistent, integrated dashboard that provides a reliable interface for inspecting previously collected reconnaissance results.
+By the end of Day 36, the application should have:
+1. Chart.js integrated into the existing dashboard.
+2. A versioned analytics API endpoint.
+3. A backend analytics service that aggregates persisted reconnaissance data.
+4. A dashboard analytics section.
+5. A first chart showing scan-status distribution.
+6. A second chart showing reconnaissance asset distribution.
+7. Tests for analytics aggregation and API responses.
+Expected result: M.A.U.R.Y.A. can display a visual summary of its collected reconnaissance data without exposing raw database records unnecessarily.
 
 ### Dashboard design direction
 
@@ -196,9 +193,7 @@ source_texts = [
     ("https://example.com/contact", "Contact security@example.com"),
 ]
 
-report = await run_concurrent_reconnaissance(
-    tasks=[build_email_task(source_texts)]
-)
+report = await run_concurrent_reconnaissance(tasks=[build_email_task(source_texts)])
 
 print(report.results)
 ```
