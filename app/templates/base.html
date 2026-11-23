@@ -71,6 +71,16 @@
                 Telemetry
             </a>
 
+            <a href="/dashboard/analytics"
+               {% if request.url.path == request.url_for('dashboard_analytics').path %}
+               aria-current="page"
+               class="text-sm font-semibold text-cyan-400 hover:text-cyan-300"
+               {% else %}
+               class="text-sm text-slate-300 hover:text-white"
+               {% endif %}>
+                Analytics
+            </a>
+
         </nav>
 
         <main class="mx-auto min-w-0 max-w-7xl px-6 py-8">
@@ -87,6 +97,10 @@
 
     </div>
 
+    <script
+        src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"
+        defer
+    ></script>
     {% block scripts %}{% endblock %}
 
 </body>

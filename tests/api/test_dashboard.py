@@ -15,10 +15,21 @@ def test_dashboard_routes_are_registered(client):
 
     assert dashboard_paths == {
         "/dashboard/",
+        "/dashboard/analytics",
         "/dashboard/targets",
         "/dashboard/targets/{target_id}",
         "/dashboard/telemetry",
     }
+
+
+def test_dashboard_analytics_page_renders(client):
+    response = client.get("/dashboard/analytics")
+
+    assert response.status_code == 200
+    assert "Reconnaissance Analytics" in response.text
+    assert "scanStatusChart" in response.text
+    assert "assetDistributionChart" in response.text
+    assert "/static/js/analytics.js" in response.text
 
 
 def test_dashboard_stylesheet_is_mounted(client):
@@ -26,6 +37,13 @@ def test_dashboard_stylesheet_is_mounted(client):
 
     assert response.status_code == 200
     assert "text/css" in response.headers["content-type"]
+
+
+def test_dashboard_loads_pinned_chartjs(client):
+    response = client.get("/dashboard/")
+
+    assert response.status_code == 200
+    assert "https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" in response.text
 
 
 def test_dashboard_overview_renders(client):

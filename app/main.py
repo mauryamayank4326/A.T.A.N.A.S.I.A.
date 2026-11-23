@@ -113,9 +113,6 @@ def create_application(
     )
     application.include_router(dashboard_router)
 
-    if runtime_settings.api_prefix == "/api/v1":
-        application.include_router(api_router)
-
     return application
 
 

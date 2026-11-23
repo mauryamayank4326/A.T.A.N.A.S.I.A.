@@ -5,6 +5,7 @@ from uuid import uuid4
 
 import pytest
 from fastapi.testclient import TestClient
+from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import Settings
@@ -73,6 +74,27 @@ def client(tmp_path: Path) -> TestClient:
 
     with TestClient(application) as test_client:
         yield test_client
+
+
+@pytest.fixture
+async def async_client(tmp_path: Path) -> AsyncGenerator[AsyncClient, None]:
+    """Create an async FastAPI client backed by an isolated SQLite database."""
+    settings = Settings(
+        app_name="M.A.U.R.Y.A. Async Test",
+        environment="test",
+        debug=False,
+        database_url=f"sqlite+aiosqlite:///{tmp_path / 'async-api.db'}",
+        shodan_api_key=None,
+    )
+    application = create_app(settings)
+
+    async with application.router.lifespan_context(application):
+        transport = ASGITransport(app=application)
+        async with AsyncClient(
+            transport=transport,
+            base_url="http://test",
+        ) as test_client:
+            yield test_client
 
 
 @pytest.fixture

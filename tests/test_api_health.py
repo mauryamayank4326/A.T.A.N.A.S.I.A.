@@ -37,4 +37,4 @@ def test_application_has_expected_api_prefix(tmp_path):
 
     app = create_app(settings)
 
-    assert any(route.path == "/api/v1/health" for route in app.routes)
+    assert "/api/v1/health" in app.openapi()["paths"]
