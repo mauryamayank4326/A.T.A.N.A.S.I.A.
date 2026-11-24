@@ -64,6 +64,15 @@ async def get_analytics_overview(
         },
     ]
 
+    port_distribution = await get_port_distribution(
+        session,
+        limit=10,
+    )
+    service_distribution = await get_service_distribution(
+        session,
+        limit=10,
+    )
+
     return {
         "total_scans": total_scans,
         "scan_status_distribution": status_distribution,
@@ -71,4 +80,91 @@ async def get_analytics_overview(
         "total_exposed_ports": total_exposed_ports,
         "total_discovered_emails": total_discovered_emails,
         "asset_distribution": asset_distribution,
+        "port_distribution": port_distribution,
+        "service_distribution": service_distribution,
     }
+
+
+async def get_port_distribution(
+    session,
+    *,
+    limit: int = 10,
+) -> list[dict[str, int]]:
+    """
+    Return the most frequently observed exposed ports.
+
+    Counts persisted ExposedPort observations, not unique hosts.
+    """
+    if isinstance(limit, bool) or not isinstance(limit, int):
+        raise ValueError("limit must be an integer")
+
+    if not 1 <= limit <= 50:
+        raise ValueError("limit must be between 1 and 50")
+
+    statement = (
+        select(
+            ExposedPort.port.label("port"),
+            func.count(ExposedPort.id).label("count"),
+        )
+        .group_by(ExposedPort.port)
+        .order_by(
+            func.count(ExposedPort.id).desc(),
+            ExposedPort.port.asc(),
+        )
+        .limit(limit)
+    )
+
+    result = await session.execute(statement)
+
+    return [
+        {
+            "port": row.port,
+            "count": row.count,
+        }
+        for row in result.all()
+    ]
+
+
+async def get_service_distribution(
+    session,
+    *,
+    limit: int = 10,
+) -> list[dict[str, int | str]]:
+    """
+    Return the most frequently observed service names.
+
+    NULL and empty service names are grouped as 'unknown'.
+    """
+    if isinstance(limit, bool) or not isinstance(limit, int):
+        raise ValueError("limit must be an integer")
+
+    if not 1 <= limit <= 50:
+        raise ValueError("limit must be between 1 and 50")
+
+    normalized_service = func.coalesce(
+        func.nullif(func.trim(ExposedPort.service_name), ""),
+        "unknown",
+    )
+
+    statement = (
+        select(
+            normalized_service.label("service_name"),
+            func.count(ExposedPort.id).label("count"),
+        )
+        .group_by(normalized_service)
+        .order_by(
+            func.count(ExposedPort.id).desc(),
+            normalized_service.asc(),
+        )
+        .limit(limit)
+    )
+
+    result = await session.execute(statement)
+
+    return [
+        {
+            "service_name": row.service_name,
+            "count": row.count,
+        }
+        for row in result.all()
+    ]

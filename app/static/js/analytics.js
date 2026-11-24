@@ -18,6 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const statusCanvas = document.getElementById("scanStatusChart");
     const assetCanvas = document.getElementById("assetDistributionChart");
+    const portCanvas = document.getElementById("portDistributionChart");
+    const serviceCanvas = document.getElementById("serviceDistributionChart");
 
     if (statusCanvas) {
         const statuses = analytics.scan_status_distribution ?? [];
@@ -66,6 +68,53 @@ document.addEventListener("DOMContentLoaded", () => {
                         },
                     },
                 },
+            },
+        });
+    }
+
+    if (portCanvas) {
+        const portData = analytics.port_distribution ?? [];
+
+        new Chart(portCanvas, {
+            type: "bar",
+            data: {
+                labels: portData.map(item => String(item.port)),
+                datasets: [{
+                    label: "Exposed Port Observations",
+                    data: portData.map(item => item.count),
+                }],
+            },
+            options: {
+                indexAxis: "y",
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0,
+                        },
+                    },
+                },
+            },
+        });
+    }
+
+    if (serviceCanvas) {
+        const serviceData = analytics.service_distribution ?? [];
+
+        new Chart(serviceCanvas, {
+            type: "doughnut",
+            data: {
+                labels: serviceData.map(item => item.service_name),
+                datasets: [{
+                    label: "Service Observations",
+                    data: serviceData.map(item => item.count),
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
             },
         });
     }

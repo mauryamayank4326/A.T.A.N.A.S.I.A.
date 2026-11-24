@@ -30,6 +30,8 @@ async def test_analytics_overview_has_expected_fields(async_client):
     assert "total_exposed_ports" in data
     assert "total_discovered_emails" in data
     assert "asset_distribution" in data
+    assert "port_distribution" in data
+    assert "service_distribution" in data
 
 
 @pytest.mark.asyncio
@@ -65,8 +67,20 @@ async def test_analytics_service_returns_exact_seeded_counts(db_session):
         [
             Subdomain(scan_id=pending_scan.id, fqdn="api.analytics.example"),
             Subdomain(scan_id=completed_scan.id, fqdn="www.analytics.example"),
-            ExposedPort(scan_id=pending_scan.id, host="192.0.2.10", port=80, protocol="tcp"),
-            ExposedPort(scan_id=completed_scan.id, host="192.0.2.11", port=443, protocol="tcp"),
+            ExposedPort(
+                scan_id=pending_scan.id,
+                host="192.0.2.10",
+                port=80,
+                protocol="tcp",
+                service_name="http",
+            ),
+            ExposedPort(
+                scan_id=completed_scan.id,
+                host="192.0.2.11",
+                port=443,
+                protocol="tcp",
+                service_name="https",
+            ),
             DiscoveredEmail(
                 scan_id=pending_scan.id,
                 email_address="admin@analytics.example",
@@ -97,6 +111,15 @@ async def test_analytics_service_returns_exact_seeded_counts(db_session):
         "Exposed Ports": 2,
         "Discovered Emails": 1,
     }
+
+    assert data["port_distribution"] == [
+        {"port": 80, "count": 1},
+        {"port": 443, "count": 1},
+    ]
+    assert data["service_distribution"] == [
+        {"service_name": "http", "count": 1},
+        {"service_name": "https", "count": 1},
+    ]
 
 
 @pytest.mark.asyncio

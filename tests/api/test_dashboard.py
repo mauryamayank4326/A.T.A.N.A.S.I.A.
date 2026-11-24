@@ -29,6 +29,12 @@ def test_dashboard_analytics_page_renders(client):
     assert "Reconnaissance Analytics" in response.text
     assert "scanStatusChart" in response.text
     assert "assetDistributionChart" in response.text
+    assert "portDistributionChart" in response.text
+    assert "serviceDistributionChart" in response.text
+    assert "Exposed Port Distribution" in response.text
+    assert "Service Identification Distribution" in response.text
+    assert 'aria-label="Most frequently observed exposed ports"' in response.text
+    assert 'aria-label="Distribution of identified services"' in response.text
     assert "/static/js/analytics.js" in response.text
 
 
