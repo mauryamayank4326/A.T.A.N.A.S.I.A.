@@ -22,16 +22,21 @@ M.A.U.R.Y.A. is a Python-based external attack surface management and cyber thre
 - **Development milestone:** 0.36.0
 - **Lifecycle:** Day 36 / 50
 
-By the end of Day 36, the application should have:
-1. Chart.js integrated into the existing dashboard.
-2. A versioned analytics API endpoint.
-3. A backend analytics service that aggregates persisted reconnaissance data.
-4. A dashboard analytics section.
-5. A first chart showing scan-status distribution.
-6. A second chart showing reconnaissance asset distribution.
-7. Tests for analytics aggregation and API responses.
-Expected result: M.A.U.R.Y.A. can display a visual summary of its collected reconnaissance data without exposing raw database records unnecessarily.
+Build two additional analytics views:
+1. Port distribution: identify the most frequently observed exposed ports.
+2. Service distribution: identify the most frequently identified services, including records whose service name is unknown.
 
+By the end of Day 37, the dashboard should provide:
+- A ranked view of commonly observed ports.
+- A service identification distribution.
+- Counts that accurately represent persisted reconnaissance observations.
+- API responses suitable for Chart.js.
+- Regression tests for aggregation, ordering, and missing service names.
+
+Important counting rule
+An ExposedPort record represents an observation associated with a scan, host, port, and protocol. Therefore, today's charts count exposed-port observations, not necessarily unique machines or unique network services.
+
+For example, if port 443 appears on ten different hosts, the count is ten observations.
 ### Dashboard design direction
 
 The interface will follow a security operations center (SOC) aesthetic:

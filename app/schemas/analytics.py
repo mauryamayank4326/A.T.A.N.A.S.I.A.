@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ScanStatusMetric(BaseModel):
@@ -11,6 +11,16 @@ class AssetDistributionMetric(BaseModel):
     count: int
 
 
+class PortDistributionMetric(BaseModel):
+    port: int = Field(ge=1, le=65535)
+    count: int = Field(ge=0)
+
+
+class ServiceDistributionMetric(BaseModel):
+    service_name: str = Field(min_length=1)
+    count: int = Field(ge=0)
+
+
 class AnalyticsOverviewResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -20,3 +30,5 @@ class AnalyticsOverviewResponse(BaseModel):
     total_exposed_ports: int
     total_discovered_emails: int
     asset_distribution: list[AssetDistributionMetric]
+    port_distribution: list[PortDistributionMetric] = Field(default_factory=list)
+    service_distribution: list[ServiceDistributionMetric] = Field(default_factory=list)

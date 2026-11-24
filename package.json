@@ -2,7 +2,7 @@
   "name": "maurya-dashboard",
   "private": true,
   "scripts": {
-    "css:build": "tailwindcss -i ./app/static/css/input.css -o ./app/static/css/app.css --minify",
+    "css:build": "tailwindcss -i ./app/static/css/input.css -o ./app/static/css/app.css",
     "css:watch": "tailwindcss -i ./app/static/css/input.css -o ./app/static/css/app.css --watch"
   },
   "devDependencies": {

@@ -72,6 +72,38 @@
 
     </section>
 
+    <section class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+
+        <div class="rounded-xl border border-slate-700 bg-slate-900 p-5">
+            <h2 class="mb-4 text-lg font-semibold text-slate-100">
+                Exposed Port Distribution
+            </h2>
+
+            <div class="relative h-72">
+                <canvas
+                    id="portDistributionChart"
+                    aria-label="Most frequently observed exposed ports"
+                    role="img"
+                ></canvas>
+            </div>
+        </div>
+
+        <div class="rounded-xl border border-slate-700 bg-slate-900 p-5">
+            <h2 class="mb-4 text-lg font-semibold text-slate-100">
+                Service Identification Distribution
+            </h2>
+
+            <div class="relative h-72">
+                <canvas
+                    id="serviceDistributionChart"
+                    aria-label="Distribution of identified services"
+                    role="img"
+                ></canvas>
+            </div>
+        </div>
+
+    </section>
+
 </div>
 
 <script id="analytics-data" type="application/json">
